@@ -19,7 +19,7 @@ queue.sync { // 1
 
 //!! 2) main.sync !!
 var numbers = [0, 1, 2, 3, 4]
-(0..<5).forEach({ index in
+(0..<5).forEach({ index in //   메인 스레드에서 “끝날때까지 기다리고 있을게~” 하고 task 를 메인 큐에 보냄
    DispatchQueue.main.sync { // main이 block 처리해버린 후 큐에 넣은 작업이 완료될 때까지 무한 기다림, sync task 시작도 못하고 deadLock
        print(numbers[index])
    }
@@ -62,11 +62,32 @@ var numbers = [0, 1, 2, 3, 4]
 
 //실행 에러
 // !! 4) 같은 큐에서 같은 큐로 sync를 보냄 !! -> deadlock 가능성 있음
-// 왜냐면, async로 할당되었던 스레드는 block 처리되어 내부 sync가 끝나길 바라는 상태이고, 동일한 스레드로 sync task가 할당되면 sync는 시작도 못함.
+// 왜냐면, async로 할당되었던 스레드는 block 처리되어 내부 sync가 끝나길 바라는 기다리는 상태이고, 동일한 스레드로 sync task가 할당되면 sync는 시작도 못함.
 (0..<5).forEach({ index in
-    DispatchQueue.global().async {
+    DispatchQueue.global().async { // thread 1
         DispatchQueue.global().sync {
-            print("1: \(numbers[index])")
+            print("1: \(numbers[index])") // thread 1 - 같은 스레드로 할당되면(다른 스레드로 할당되면(우선순위가 다른 큐라던가) 데드락 X) 밖에서는 안에 작업이 끝나길 기다리고 있어 데드락!
         }
     }
 })
+
+
+//데드락 발생 가능성 있음
+DispatchQueue.global().async {
+    DispatchQueue.global().sync {
+    }
+}
+//데드락 발생 가능성 없음
+DispatchQueue.global(qos: .utility).async {
+    DispatchQueue.global().sync {
+    }
+}
+
+
+
+// 하면 안되는 경우!
+//main에서
+DispatchQueue.global().sync {
+    
+}
+// -> main이 기다려서 UI 멈춘 상태임
