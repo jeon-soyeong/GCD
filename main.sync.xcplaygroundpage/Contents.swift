@@ -19,7 +19,7 @@ queue.sync { // 1
 
 //!! 2) main.sync !!
 var numbers = [0, 1, 2, 3, 4]
-(0..<5).forEach({ index in //   메인 스레드에서 “끝날때까지 기다리고 있을게~” 하고 task 를 메인 큐에 보냄
+(0..<5).forEach({ index in //   메인 스레드에서 “끝날 때까지 기다리고 있을게~” 하고 task 를 메인 큐에 보냄
    DispatchQueue.main.sync { // main이 block 처리해버린 후 큐에 넣은 작업이 완료될 때까지 무한 기다림, sync task 시작도 못하고 deadLock
        print(numbers[index])
    }
@@ -50,12 +50,12 @@ var numbers = [0, 1, 2, 3, 4]
     }
 })
 
-//TableView나 CollectionView에 셀을 추가하거나 제거하는 작업이 진행 중
+// TableView나 CollectionView에 셀을 추가하거나 제거하는 작업이 진행 중
 //> 네트워크 통신과 같은 다른 비동기 작업으로 인해 DataSource의 데이터가 변경
 //> (셀을 추가하거나 제거하는 작업이 아직 안끝난 상태)
 //> DataSource의 데이터와 View가 일치하지 않아 에러 발생
 //> 방지위해 DispatchQueue.main.sync 사용
-
+//> ex) PHPhotoLibraryChangeObserver
 
 //----------------------------------------------------------------
 
