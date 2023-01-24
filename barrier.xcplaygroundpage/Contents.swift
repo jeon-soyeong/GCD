@@ -42,3 +42,5 @@ queue.async {
 //------------
 // concurrent.sync 로 읽고 빠르게 concurrent하게 동시에 읽기 위해서
 // concurrent.async(flags: barrier) 안정성있게 다른 스레드에서 읽지 말라고
+
+// concurrent queue를 사용하기 때문에 조금 더 효율적인 방법이라고 할 수 있음. (읽기 작업에서 여러 스레드 사용 가능)
