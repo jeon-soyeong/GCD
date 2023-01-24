@@ -27,6 +27,7 @@ var numbers = [0, 1, 2, 3, 4]
 
 
 //!! 3) main.async + main.sync !!
+// Serial Queue인 상황: 한 번에 하나의 작업만 가능 > 내부에 sync한 작업이 존재 > deadlock 발생
 (0..<5).forEach({ index in
     DispatchQueue.main.async {// outer
         DispatchQueue.main.sync {// inner
